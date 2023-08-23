@@ -9,11 +9,12 @@ AWS.config.update({
 const s3 = new AWS.S3();
 const S3_BUCKET = "notices-poc-bucket";
 
-const uploadToS3 = async (fileName: string, data: any) => {
+const uploadToS3 = async (fileName: string, metadata: any, data: any) => {
     const params = {
         Bucket: S3_BUCKET,
         Key: fileName,
         Body: data,
+        Metadata: metadata,
         ContentType: "application/pdf",
         // ACL: "public-read", // doesnt work with bucket settings
     };
