@@ -1,34 +1,72 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Notice service POC
 
-## Getting Started
+## How to run
 
-First, run the development server:
+1. Generate AWS credentials
+    ```saml2aws login```
+2. Set AWS creds profile
+    `export AWS_PROFILE=est-development-Okta-Development-Eng`
+3. Run the service
+    `npm run dev`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+## Types of API requests
+
+1. Request for a secure document with an auto generated passcode
+```
+curl --location 'http://localhost:3000/api/generate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "secure": true,
+    
+    "metadata": {
+        "firstName": "John",
+        "date": "09/27/23",
+        "declineReasons": [
+            {
+                "reason": "Low FICO Score",
+                "explanation": "Your FICO is 699 and we need at least 700"
+            },
+            {
+                "reason": "Ineligible State",
+                "explanation": "You live in NY. No good"
+            }
+        ]
+    }
+}'
+```
+The response should include a link to retrieve the document along with the passcode
+```
+{
+    "link": "http://localhost:3000/api/retrieve?code=754510",
+    "code": "754510"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Provide the passcode instead of an auto generated one
+```
+curl --location 'http://localhost:3000/api/generate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "secure": true,
+    "secure_code": "12466",
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    "metadata": {
+        "firstName": "John",
+        ...
+    }
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+3. Download the document 
+```
+curl --location 'http://localhost:3000/api/generate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "download": true,
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    "metadata": {
+        "firstName": "John",
+        ...
+    }
+}'
+```

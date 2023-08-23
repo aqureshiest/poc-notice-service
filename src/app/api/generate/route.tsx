@@ -12,7 +12,7 @@ const generateUniqueFilename = (extension: string): string => {
 };
 
 export async function POST(request: NextRequest) {
-    const { product, notice_type, metadata, secure, secure_type, secure_code } =
+    const { product, notice_type, metadata, secure, secure_type, secure_code, download } =
         await request.json();
 
     // identify the notice template
@@ -34,14 +34,16 @@ export async function POST(request: NextRequest) {
     const pdf = await generatePDFFromHTML(template);
     console.log("pdf generated");
 
+    // secure documents are uploaded to S3 and a passcode embedded link is returned
     if (secure) {
         const response = await secureAndGetLink(pdf, secure_type, secure_code);
 
         return NextResponse.json(response);
-    } else {
-        const filename = generateUniqueFilename("pdf");
-        const link = await uploadToS3(filename, pdf);
-
-        return NextResponse.json({ link });
     }
+    // unsecured document can be downloaded
+    else if (download) {
+        return new NextResponse(pdf as any, {});
+    }
+
+    return NextResponse.json({ message: "nothing was done" });
 }
