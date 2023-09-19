@@ -17,6 +17,7 @@ curl --location 'http://localhost:3000/api/generate' \
 --header 'Content-Type: application/json' \
 --data '{
     "secure": true,
+    "expiresInS": 30,
     
     "metadata": {
         "firstName": "John",
@@ -34,26 +35,10 @@ curl --location 'http://localhost:3000/api/generate' \
     }
 }'
 ```
-The response should include a link to retrieve the document along with the passcode
+The response should include a link to retrieve the document 
 ```
 {
-    "link": "http://localhost:3000/api/retrieve?code=754510",
-    "code": "754510"
-}
-```
-
-2. Provide the passcode instead of an auto generated one
-```
-curl --location 'http://localhost:3000/api/generate' \
---header 'Content-Type: application/json' \
---data '{
-    "secure": true,
-    "secure_code": "12466",
-
-    "metadata": {
-        "firstName": "John",
-        ...
-    }
+    "link": "http://localhost:3000/api/retrieve?key=e63e9d09-1a27-442c-8a72-517337a2c2b8"
 }
 ```
 

@@ -5,7 +5,7 @@ import { secureAndGetLink } from "@/app/modules/secure-service";
 import Handlebars from "handlebars";
 
 export async function POST(request: NextRequest) {
-    const { product, notice_type, metadata, secure, secure_type, secure_code, download } =
+    const { product, notice_type, metadata, secure, secure_type, download, expiresInS } =
         await request.json();
 
     // identify the notice template
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     // secure documents are uploaded to S3 and a passcode embedded link is returned
     if (secure) {
-        const response = await secureAndGetLink(pdf, secure_type, secure_code);
+        const response = await secureAndGetLink(pdf, secure_type, expiresInS);
 
         return NextResponse.json(response);
     }
