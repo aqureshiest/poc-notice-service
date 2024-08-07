@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { swaggerUi, swaggerDocs } from './swagger';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,7 +17,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        {/* Swagger UI */}
+        <script>
+          {`
+            const express = require('express');
+            const app = express();
+            app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+          `}
+        </script>
+      </body>
     </html>
   )
 }
