@@ -4,6 +4,46 @@ import { generatePDFFromHTML } from "../../modules/pdf-service";
 import { secureAndGetLink } from "@/app/modules/secure-service";
 import Handlebars from "handlebars";
 
+/**
+ * @swagger
+ * /api/generate:
+ *   post:
+ *     summary: Generate a secure document
+ *     description: Generates a PDF document based on the provided metadata and returns a secure link if requested.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               product:
+ *                 type: string
+ *               notice_type:
+ *                 type: string
+ *               metadata:
+ *                 type: object
+ *               secure:
+ *                 type: boolean
+ *               secure_type:
+ *                 type: string
+ *               download:
+ *                 type: boolean
+ *               expiresInS:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: A successful response with a link to the document.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 link:
+ *                   type: string
+ *       500:
+ *         description: Internal server error.
+ */
 export async function POST(request: NextRequest) {
     const { product, notice_type, metadata, secure, secure_type, download, expiresInS } =
         await request.json();
